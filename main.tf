@@ -80,17 +80,17 @@ resource "aws_instance" "web-server" {
   vpc_security_group_ids = [aws_security_group.web_sg.id]
   key_name               = "spider"
 
-
   user_data = <<-EOF
     #!/bin/bash
     yum install httpd -y
     yum install git -y
     yum install vim -y
     git clone https://github.com/Derick-Roshan/Portfolio-website.git
-    cd Portfolio-website/* /var/www/html/
+    cp -rf Portfolio-website/* /var/www/html/
     systemctl enable httpd
     systemctl start httpd
   EOF
+
 
   tags = {
     Name = "web-server"
