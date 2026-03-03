@@ -2,44 +2,36 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('016819180853')
-        AWS_SECRET_ACCESS_KEY = credentials('EnIyYVQDJ7ZDsR8o3bBSNtltnZ98gfS98U35XcTp')
-        TF_IN_AUTOMATION      = '1'
+        TF_IN_AUTOMATION = '1'
     }
 
     stages {
-
-        stage('Checkout') {
+        stage('Deploy Terraform') {
             steps {
                 checkout scm
-            }
-        }
 
-        stage('Terraform Init') {
-            steps {
-                sh 'terraform init'
-            }
-        }
-
-        stage('Terraform Plan') {
-            steps {
-                sh 'terraform plan'
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                sh 'terraform apply -auto-approve'
+                withCredentials([usernamePassword(
+                    credentialsId: '016819180853',
+                    usernameVariable: 'AKIAQH2UAKU23WHI7VMAD',
+                    passwordVariable: 'uhRGm+PmA91vF5RUbFGlo34gcBLAkhIpohjFab6Q'
+                )]) {
+                    sh '''
+                        terraform --version
+                        terraform init
+                        terraform plan
+                        terraform apply -auto-approve
+                    '''
+                }
             }
         }
     }
 
     post {
-        failure {
-            echo 'Terraform failed'
-        }
         success {
             echo 'Terraform success'
+        }
+        failure {
+            echo 'Terraform failed'
         }
     }
 }
