@@ -17,7 +17,7 @@ pipeline {
             steps {
                 withCredentials([
                     string(credentialsId: 'aws-secret-key', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: '+20UEcGGqiYyq+3Dd7M8lfo3Ge7nWwxSZNMuV+T2', variable: 'AWS_SECRET_ACCESS_KEY')
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
                     sh 'terraform init'
                 }
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 withCredentials([
                     string(credentialsId: 'aws-secret-key', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: '+20UEcGGqiYyq+3Dd7M8lfo3Ge7nWwxSZNMuV+T2', variable: 'AWS_SECRET_ACCESS_KEY')
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
                     sh 'terraform plan -out=tfplan'
                 }
@@ -45,7 +45,7 @@ pipeline {
             steps {
                 withCredentials([
                     string(credentialsId: 'aws-secret-key', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: '+20UEcGGqiYyq+3Dd7M8lfo3Ge7nWwxSZNMuV+T2', variable: 'AWS_SECRET_ACCESS_KEY')
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
                     sh 'terraform apply -auto-approve tfplan'
                 }
