@@ -20,9 +20,9 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'aws-secret-key',
-                    usernameVariable: 'AWS_ACCESS_KEY_ID',
-                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    credentialsId: 'aws-cred',
+                    usernameVariable: 'AKIAQH2UAKU22K5LDYOJ',
+                    passwordVariable: '2u+H/hbqVpdfnjal+bK5F4tXP3wvYOBX21OBJ+hk'
                 )]) {
                     sh '''
                         terraform --version
@@ -41,9 +41,9 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'aws-secret-key',
-                    usernameVariable: 'AWS_ACCESS_KEY_ID',
-                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    credentialsId: 'aws-cred',
+                    usernameVariable: 'AKIAQH2UAKU22K5LDYOJ',
+                    passwordVariable: '2u+H/hbqVpdfnjal+bK5F4tXP3wvYOBX21OBJ+hk'
                 )]) {
                     sh 'terraform plan -out=tfplan'
                 }
@@ -55,9 +55,9 @@ pipeline {
                 input message: "Do you want to apply Terraform changes?"
 
                 withCredentials([usernamePassword(
-                    credentialsId: 'aws-secret-key',
-                    usernameVariable: 'AWS_ACCESS_KEY_ID',
-                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    credentialsId: 'aws-cred',
+                    usernameVariable: 'AKIAQH2UAKU22K5LDYOJ',
+                    passwordVariable: '2u+H/hbqVpdfnjal+bK5F4tXP3wvYOBX21OBJ+hk'
                 )]) {
                     sh 'terraform apply -input=false tfplan'
                 }
