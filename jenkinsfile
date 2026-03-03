@@ -11,7 +11,7 @@ pipeline {
                 checkout scm
 
                 withCredentials([usernamePassword(
-                    credentialsId: '016819180853',
+                    credentialsId: 'aws-creds',
                     usernameVariable: 'AKIAQH2UAKU23WHI7VMAD',
                     passwordVariable: 'uhRGm+PmA91vF5RUbFGlo34gcBLAkhIpohjFab6Q'
                 )]) {
