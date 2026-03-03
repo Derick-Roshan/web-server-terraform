@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        terraform 'terraform'   // must match the Terraform tool name in Jenkins
-    }
-
     environment {
         AWS_ACCESS_KEY_ID     = credentials('016819180853')
         AWS_SECRET_ACCESS_KEY = credentials('EnIyYVQDJ7ZDsR8o3bBSNtltnZ98gfS98U35XcTp')
@@ -12,6 +8,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -20,29 +17,29 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init -input=false'
+                sh 'terraform init'
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan -out=tfplan -input=false'
+                sh 'terraform plan'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve tfplan'
+                sh 'terraform apply -auto-approve'
             }
         }
     }
 
     post {
-        success {
-            echo '✔ Terraform applied successfully'
-        }
         failure {
-            echo '❌ Terraform failed'
+            echo 'Terraform failed'
+        }
+        success {
+            echo 'Terraform success'
         }
     }
 }
