@@ -11,9 +11,9 @@ pipeline {
                 checkout scm
 
                 withCredentials([usernamePassword(
-                    credentialsId: 'aws-creds',
-                    usernameVariable: 'AKIAQH2UAKU23WHI7VMAD',
-                    passwordVariable: 'uhRGm+PmA91vF5RUbFGlo34gcBLAkhIpohjFab6Q'
+                    credentialsId: '016819180853',
+                    usernameVariable: 'AKIAQH2UAKU25VSOUEX2',
+                    passwordVariable: '7Gxy1It3wvBiTXm5hB5WgjOyMGlXJB8LYepzv/TH'
                 )]) {
                     sh '''
                         terraform --version
