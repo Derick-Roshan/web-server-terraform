@@ -11,7 +11,7 @@ pipeline {
                 checkout scm
 
                 withCredentials([usernamePassword(
-                    credentialsId: 'terraform',
+                    credentialsId: 'admin',
                     usernameVariable: 'AKIAQH2UAKU25VSOUEX2',
                     passwordVariable: '7Gxy1It3wvBiTXm5hB5WgjOyMGlXJB8LYepzv/TH'
                 )]) {
