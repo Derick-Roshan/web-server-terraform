@@ -11,12 +11,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Derick-Roshan/web-server-terraform.git'
-            }
-        }
-
         stage('Terraform Init') {
             steps {
                 sh 'terraform init'
