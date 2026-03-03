@@ -2,7 +2,11 @@ pipeline {
     agent any
 
     environment {
-        TF_IN_AUTOMATION = 'true'
+        AWS_DEFAULT_REGION = "us-east-2"
+    }
+
+    options {
+        timestamps()
     }
 
     stages {
@@ -13,41 +17,49 @@ pipeline {
             }
         }
 
-        stage('Init') {
+        stage('Terraform Init') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'aws-secret-key', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
-                ]) {
-                    sh 'terraform init'
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-secret-key',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
+                    sh '''
+                        terraform --version
+                        terraform init -input=false
+                    '''
                 }
             }
         }
 
-        stage('Validate') {
+        stage('Terraform Validate') {
             steps {
                 sh 'terraform validate'
             }
         }
 
-        stage('Plan') {
+        stage('Terraform Plan') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'aws-secret-key', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
-                ]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-secret-key',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
                     sh 'terraform plan -out=tfplan'
                 }
             }
         }
 
-        stage('Apply') {
+        stage('Terraform Apply') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'aws-secret-key', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
-                ]) {
-                    sh 'terraform apply -auto-approve tfplan'
+                input message: "Do you want to apply Terraform changes?"
+
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-secret-key',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
+                    sh 'terraform apply -input=false tfplan'
                 }
             }
         }
@@ -55,10 +67,10 @@ pipeline {
 
     post {
         success {
-            echo 'Terraform deployment successful'
+            echo 'Terraform deployment SUCCESS'
         }
         failure {
-            echo 'Terraform deployment failed'
+            echo 'Terraform deployment FAILED'
         }
     }
 }
