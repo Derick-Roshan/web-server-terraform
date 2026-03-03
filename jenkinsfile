@@ -1,76 +1,13 @@
-pipeline {
-    agent any
+stage('Terraform Destroy') {
+    steps {
+        input message: "Are you sure you want to DESTROY infrastructure?"
 
-    environment {
-        AWS_DEFAULT_REGION = "us-east-2"
-    }
-
-    options {
-        timestamps()
-    }
-
-    stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Terraform Init') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'aws-cred',
-                    usernameVariable: 'AKIAQH2UAKU22K5LDYOJ',
-                    passwordVariable: '2u+H/hbqVpdfnjal+bK5F4tXP3wvYOBX21OBJ+hk'
-                )]) {
-                    sh '''
-                        terraform --version
-                        terraform init -input=false
-                    '''
-                }
-            }
-        }
-
-        stage('Terraform Validate') {
-            steps {
-                sh 'terraform validate'
-            }
-        }
-
-        stage('Terraform Plan') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'aws-cred',
-                    usernameVariable: 'AKIAQH2UAKU22K5LDYOJ',
-                    passwordVariable: '2u+H/hbqVpdfnjal+bK5F4tXP3wvYOBX21OBJ+hk'
-                )]) {
-                    sh 'terraform plan -out=tfplan'
-                }
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                input message: "Do you want to apply Terraform changes?"
-
-                withCredentials([usernamePassword(
-                    credentialsId: 'aws-cred',
-                    usernameVariable: 'AKIAQH2UAKU22K5LDYOJ',
-                    passwordVariable: '2u+H/hbqVpdfnjal+bK5F4tXP3wvYOBX21OBJ+hk'
-                )]) {
-                    sh 'terraform apply -input=false tfplan'
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Terraform deployment SUCCESS'
-        }
-        failure {
-            echo 'Terraform deployment FAILED'
+        withCredentials([usernamePassword(
+            credentialsId: 'aws-creds',
+            usernameVariable: 'AKIAQH2UAKU22K5LDYOJ',
+            passwordVariable: '2u+H/hbqVpdfnjal+bK5F4tXP3wvYOBX21OBJ+hk'
+        )]) {
+            sh 'terraform destroy -auto-approve'
         }
     }
 }
