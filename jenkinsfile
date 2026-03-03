@@ -1,13 +1,50 @@
-stage('Terraform Destroy') {
-    steps {
-        input message: "Are you sure you want to DESTROY infrastructure?"
+pipeline {
+    agent any
 
-        withCredentials([usernamePassword(
-            credentialsId: 'aws-creds',
-            usernameVariable: 'AKIAQH2UAKU22K5LDYOJ',
-            passwordVariable: '2u+H/hbqVpdfnjal+bK5F4tXP3wvYOBX21OBJ+hk'
-        )]) {
-            sh 'terraform destroy -auto-approve'
+    parameters {
+        choice(
+            name: 'ACTION',
+            choices: ['apply', 'destroy'],
+            description: 'Choose Terraform action'
+        )
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Derick-Roshan/web-server-terraform.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Plan') {
+            when {
+                expression { params.ACTION == 'apply' }
+            }
+            steps {
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+
+        stage('Terraform Execute') {
+            steps {
+                script {
+                    if (params.ACTION == 'apply') {
+                        sh '''
+                            terraform apply -auto-approve tfplan
+                            terraform output -raw public_ip
+                        '''
+                    } else {
+                        sh 'terraform destroy -auto-approve'
+                    }
+                }
+            }
         }
     }
 }
